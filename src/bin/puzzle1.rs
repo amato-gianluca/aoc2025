@@ -48,7 +48,7 @@ fn part2(rotations: &Vec<i32>) -> i32 {
 
 #[test]
 fn test() {
-    let rotations = read_file("inputs/puzzle1_example.txt");
+    let rotations: Vec<i32> = read_file("inputs/puzzle1_example.txt");
     assert_eq!(part1(&rotations), 3);
     assert_eq!(part2(&rotations), 6);
     let rotations = read_file("inputs/puzzle1.txt");
