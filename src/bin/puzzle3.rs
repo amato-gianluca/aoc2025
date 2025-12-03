@@ -39,6 +39,6 @@ fn test() {
 
 fn main() {
     let banks = read_file("inputs/puzzle3.txt", "\n", parse_bank);
-    println!("Puzzle 1: {}", part1(&banks));
-    println!("Puzzle 2: {}", part2(&banks));
+    println!("Part 1: {}", part1(&banks));
+    println!("Part 2: {}", part2(&banks));
 }

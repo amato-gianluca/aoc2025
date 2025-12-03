@@ -45,6 +45,6 @@ fn test() {
 
 fn main() {
     let rotations = read_file("inputs/puzzle1.txt", "\n", parse_rotation);
-    println!("Puzzle 1: {}", part1(&rotations));
-    println!("Puzzle 2: {}", part2(&rotations));
+    println!("Part 1: {}", part1(&rotations));
+    println!("Part 2: {}", part2(&rotations));
 }

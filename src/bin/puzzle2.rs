@@ -61,6 +61,6 @@ fn test() {
 
 fn main() {
     let intervals = read_file("inputs/puzzle2.txt", ",", parse_interval);
-    println!("Puzzle 1: {}", part1(&intervals));
-    println!("Puzzle 2: {}", part2(&intervals));
+    println!("Part 1: {}", part1(&intervals));
+    println!("Part 2: {}", part2(&intervals));
 }
