@@ -37,14 +37,14 @@ fn count_fake_ids(interval: &(u64, u64), checker: fn(&u64) -> bool) -> u64 {
 
 fn part1(intervals: &Vec<(u64, u64)>) -> u64 {
     intervals
-        .into_iter()
+        .iter()
         .map(|i| count_fake_ids(i, is_fake_id1))
         .sum()
 }
 
 fn part2(intervals: &Vec<(u64, u64)>) -> u64 {
     intervals
-        .into_iter()
+        .iter()
         .map(|i| count_fake_ids(i, is_fake_id2))
         .sum()
 }
