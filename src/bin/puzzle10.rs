@@ -220,7 +220,7 @@ fn part2aux(buttons: &Vec<Vec<usize>>, joltages: &Vec<u32>) -> Option<u32> {
 fn part2(machines: &Vec<Machine>) -> u32 {
     //machines.iter().map(fewer_buttons_joltage).sum()
     machines.iter().map(|m| {
-        println!("{m:?");
+        println!("{m:?}");
         part2aux(&m.buttons2, &m.joltages).unwrap()
     }).sum()
 }
