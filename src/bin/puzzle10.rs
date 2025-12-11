@@ -220,7 +220,7 @@ fn part2aux(buttons: &Vec<Vec<usize>>, joltages: &Vec<u32>) -> Option<u32> {
 fn part2(machines: &Vec<Machine>) -> u32 {
     //machines.iter().map(fewer_buttons_joltage).sum()
     machines.iter().map(|m| {
-        println!("{m:?}");
+        println!("{m:?");
         part2aux(&m.buttons2, &m.joltages).unwrap()
     }).sum()
 }
@@ -232,7 +232,7 @@ fn test() {
     assert_eq!(part2(&content), 33);
     let content = read_file("inputs/puzzle10.txt", "\n", Machine::parse);
     assert_eq!(part1(&content), 509);
-    //assert_eq!(part2(&content), 1540060480);
+    assert_eq!(part2(&content), 20083);
 }
 
 fn main() {
