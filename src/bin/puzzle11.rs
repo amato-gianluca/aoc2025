@@ -1,51 +1,57 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use aoc2025::read_file;
 
+/// A Server is a line in the input file.
 type Server = (String, Vec<String>);
 
-struct Rack {
-    connections: HashMap<String, Vec<String>>,
+/// A Rack represents the entire set of servers, encoded as an HashMap. The key is the name
+/// of a server, and the content is the list of connected servers.
+type Rack = HashMap<String, Vec<String>>;
+
+/// Generates a rack from the vector of servers.
+fn rack_from_servers(servers: &Vec<Server>) -> Rack {
+    servers.iter().cloned().collect()
 }
 
-impl Rack {
-    fn from(servers: &Vec<Server>) -> Rack {
-        let connections: HashMap<_, _> = servers.iter().cloned().collect();
-        Rack { connections }
-    }
-
-    fn compute_paths_aux(&self, origin: &str, to_pass: &Vec<String>, memo: &mut HashMap<(String, Vec<String>), u64> ) -> u64 {
-        if origin == "out" {
-            if to_pass.is_empty() { 1 } else { 0 }
-        } else {
-            match memo.get(&(origin.to_string(), to_pass.to_vec())) {
-                Some(&v) => v,
-                None => {
-                    let origin_index = to_pass.iter().position(|x| x == origin);
-                    let to_pass_new = match origin_index {
-                        None => to_pass.clone(),
-                        Some(i) => {
-                            let mut v = to_pass.clone();
-                            v.remove(i);
-                            v
-                        }
-                    };
-                    let result = self.connections[origin]
-                        .iter()
-                        .map(|dst| self.compute_paths_aux(dst, &to_pass_new, memo))
-                        .sum();
-                    memo.insert((origin.to_string(), to_pass_new), result);
-                    result
+/// Memoized recursive implementation of `compute_paths`.
+fn compute_paths_aux<'a, 'b>(
+    rack: &'a Rack,
+    origin: &'a str,
+    intermediates: &Vec<&'b str>,
+    memo: &mut HashMap<(&'a str, Vec<&'b str>), u64>,
+) -> u64 {
+    if origin == "out" {
+        if intermediates.is_empty() { 1 } else { 0 }
+    } else {
+        // I don't like cloning intermediates here, but there is not a simple workaround
+        // since building a tuple requires taking owenership of the object.
+        match memo.get(&(origin, intermediates.clone())) {
+            Some(&v) => v,
+            None => {
+                let origin_index = intermediates.iter().position(|&x| x == origin);
+                let mut intermediates_new = intermediates.clone();
+                if let Some(i) = origin_index {
+                    intermediates_new.remove(i);
                 }
+                let result = rack[origin]
+                    .iter()
+                    .map(|dst| compute_paths_aux(rack, dst, &intermediates_new, memo))
+                    .sum();
+                memo.insert((origin, intermediates_new), result);
+                result
             }
         }
     }
-
-    fn compute_paths(&self, to_pass: &Vec<String>, origin: &str) -> u64 {
-        self.compute_paths_aux(origin, to_pass, &mut HashMap::new())
-    }
 }
 
+/// Computes the number of paths in the rack from `origin` to the "out" servers,
+/// only considered those paths which traverse the servers in `intermediates`.
+fn compute_paths(rack: &Rack, intermediates: &Vec<&str>, origin: &str) -> u64 {
+    compute_paths_aux(rack, origin, intermediates, &mut HashMap::new())
+}
+
+/// Parse on row of the input file.
 fn parse_server(row: &str) -> Server {
     let (key, outstring) = row.split_once(":").unwrap();
     let outs = outstring.split_whitespace().map(String::from).collect();
@@ -53,14 +59,13 @@ fn parse_server(row: &str) -> Server {
 }
 
 fn part1(servers: &Vec<Server>) -> u64 {
-    let rack = Rack::from(servers);
-    rack.compute_paths(&vec![], "you")
+    let rack = rack_from_servers(servers);
+    compute_paths(&rack, &vec![], "you")
 }
 
 fn part2(servers: &Vec<Server>) -> u64 {
-    let rack = Rack::from(servers);
-    rack.compute_paths(&vec!["fft".to_string(), "dac".to_string()], "svr")
-
+    let rack = rack_from_servers(servers);
+    compute_paths(&rack, &vec!["fft", "dac"], "svr")
 }
 
 #[test]
