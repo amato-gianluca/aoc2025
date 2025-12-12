@@ -39,7 +39,7 @@ impl Machine {
             .collect()
     }
 
-    fn parse(s_machine: &str) -> Machine {
+    fn parse(s_machine: &str) -> Self {
         let data: Vec<&str> = s_machine.split_whitespace().collect();
         let bitmap = Machine::parse_bitmap(data[0]);
         let (buttons, buttons2) = data[1..data.len() - 1]
@@ -47,7 +47,7 @@ impl Machine {
             .map(|&str| Machine::parse_button(str))
             .unzip();
         let joltages = Machine::parse_joltages(data[data.len() - 1]);
-        Machine {
+        Self {
             bitmap,
             buttons,
             buttons2,

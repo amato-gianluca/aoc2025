@@ -45,7 +45,7 @@ fn on_border(segments: &Vec<Segment>, (x, y): Point) -> bool {
 fn count_x_crosses(segments: &Vec<Segment>, (x, y): Point) -> u64 {
     let mut cross_x = 0;
     for &((x1, y1), (x2, y2)) in segments {
-        // note that t
+        // note that in y1 <= y < y2 the second inequality is strict
         if x1 == x2 && x1 <= x && y1 <= y && y < y2 {
             cross_x += 1
         }
@@ -81,12 +81,12 @@ fn is_inside(segments: &Vec<Segment>, p: Point) -> bool {
 /// Determine if the square with opposite corners in `p1` and `p2` is inside
 /// the polygon. This only works if there are no adjacent parallel segments
 /// in the border of the polygon. This seems to be the case in the input data.
-fn is_safe_rectangle(segments: &Vec<Segment>, p1: Point, p2: Point) -> bool {
+fn is_safe_rectangle(segments: &Vec<Segment>, (x1, y1): Point, (x2, y2): Point) -> bool {
     // determine corners of the rectangle
-    let ul = (p1.0.min(p2.0), p1.1.min(p2.1));
-    let ur = (p1.0.max(p2.0), p1.1.min(p2.1));
-    let dr = (p1.0.max(p2.0), p1.1.max(p2.1));
-    let dl = (p1.0.min(p2.0), p1.1.max(p2.1));
+    let ul = (x1.min(x2), y1.min(y2));
+    let ur = (x1.max(x2), y1.min(y2));
+    let dr = (x1.max(x2), y1.max(y2));
+    let dl = (x1.min(x2), y1.max(y2));
 
     // determine if all corners of the rectangle are inside the polygon
     let all_inside = is_inside(segments, ul)
@@ -113,18 +113,15 @@ fn largest_rectangle<T>(corners: &Vec<Point>, safety_check: T) -> Area
 where
     T: Fn(Point, Point) -> bool,
 {
-    (0..corners.len())
-        .into_iter()
-        .map(|i| {
-            (i + 1..corners.len())
-                .into_iter()
-                .filter(|&j| safety_check(corners[i], corners[j]))
-                .map(|j| area_rectangle(corners[i], corners[j]))
-                .max()
-                .unwrap_or(0)
-        })
-        .max()
-        .unwrap()
+    let mut maxval = 0;
+    for i in 0..corners.len() {
+        for j in i+1..corners.len() {
+            if safety_check(corners[i], corners[j]) {
+                maxval = maxval.max(area_rectangle(corners[i], corners[j]))
+            }
+        }
+    }
+    maxval
 }
 
 fn part1(corners: &Vec<Point>) -> Area {
