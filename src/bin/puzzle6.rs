@@ -1,9 +1,5 @@
 use aoc2025::read_file;
 
-fn parse_row(row: &str) -> String {
-    row.to_string()
-}
-
 fn parse_table(table: &Vec<String>) -> (Vec<Vec<u64>>, Vec<&str>) {
     let values = table[0..table.len() - 1]
         .iter()
@@ -72,16 +68,16 @@ fn part2(content: &Vec<String>) -> u64 {
 
 #[test]
 fn test() {
-    let content = read_file("inputs/puzzle6_example.txt", "\n", parse_row);
+    let content = read_file("inputs/puzzle6_example.txt", "\n", str::to_string);
     assert_eq!(part1(&content), 4277556);
     assert_eq!(part2(&content), 3263827);
-    let content = read_file("inputs/puzzle6.txt", "\n", parse_row);
+    let content = read_file("inputs/puzzle6.txt", "\n", str::to_string);
     assert_eq!(part1(&content), 6503327062445);
     assert_eq!(part2(&content), 9640641878593);
 }
 
 fn main() {
-    let content = read_file("inputs/puzzle6.txt", "\n", parse_row);
+    let content = read_file("inputs/puzzle6.txt", "\n", str::to_string);
     println!("Part 1: {}", part1(&content));
     println!("Part 2: {}", part2(&content));
 }
